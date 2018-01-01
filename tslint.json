@@ -1,0 +1,5 @@
+{
+   "extends": [
+      "@toba/lint/ts"
+   ]
+}

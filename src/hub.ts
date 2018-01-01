@@ -1,5 +1,5 @@
 import { ActionType } from "modules/actions";
-import { merge, is, removeItem } from "lib/utility";
+import { merge, is, removeItem } from "@toba/utility";
 import { StateComponent } from "jsx/stateful";
 import { statusPrefix } from "lib/i18n/language";
 import text from "lib/i18n/localize";
@@ -16,7 +16,7 @@ export type StateHandler = (action: ActionType, data?: any) => void;
 export type ViewHandler = () => void;
 
 export interface State {
-   [key: string]: any;
+  [key: string]: any;
 }
 
 /**
@@ -26,41 +26,43 @@ export interface State {
  * https://github.com/facebook/flux/tree/master/examples/flux-concepts
  */
 export const flux = {
-   /**
-    * Global registry of state stores or stateful components that should receive
-    * component action messages.
-    */
-   _handlers: [] as StateHandler[],
+  /**
+   * Global registry of state stores or stateful components that should receive
+   * component action messages.
+   */
+  _handlers: [] as StateHandler[],
 
-   /**
-    * Dispatch action to every subscribed state store or component. If `data`
-    * will be relayed to a service call then the service must define a matching
-    * `struct` to unmarshall the JSON.
-    */
-   emit(action: ActionType, data?: any) {
-      this._handlers.forEach(fn => {
-         fn(action, data);
-      });
-   },
+  /**
+   * Dispatch action to every subscribed state store or component. If `data`
+   * will be relayed to a service call then the service must define a matching
+   * `struct` to unmarshall the JSON.
+   */
+  emit(action: ActionType, data?: any) {
+    this._handlers.forEach(fn => {
+      fn(action, data);
+    });
+  },
 
-   /**
-    * Subscribe store or component to receive actions from components or other
-    * stores.
-    */
-   subscribe<S extends StateStore<any> | StateComponent<any, any>>(stateful: S): S {
-      this._handlers.push(stateful.handler.bind(stateful));
-      return stateful;
-   },
+  /**
+   * Subscribe store or component to receive actions from components or other
+   * stores.
+   */
+  subscribe<S extends StateStore<any> | StateComponent<any, any>>(
+    stateful: S
+  ): S {
+    this._handlers.push(stateful.handler.bind(stateful));
+    return stateful;
+  },
 
-   /**
-    * Remove store or component subscription. This will usually only be used by
-    * dismounting components while stores remain active for the life of the
-    * application.
-    */
-   remove<S extends StateStore<any> | StateComponent<any, any>>(stateful: S) {
-      removeItem(this._handlers, stateful.handler);
-      return this;
-   }
+  /**
+   * Remove store or component subscription. This will usually only be used by
+   * dismounting components while stores remain active for the life of the
+   * application.
+   */
+  remove<S extends StateStore<any> | StateComponent<any, any>>(stateful: S) {
+    removeItem(this._handlers, stateful.handler);
+    return this;
+  }
 };
 
 /**
@@ -72,84 +74,84 @@ export const flux = {
  * complexity.
  */
 export class StateStore<S extends State> {
-   state: S;
-   _initial: S;
-   _handlers: ViewHandler[] = [];
+  state: S;
+  _initial: S;
+  _handlers: ViewHandler[] = [];
 
-   /**
-    * Construct store with its initial state. If `reset()` is called, it will
-    * return to this state.
-    */
-   constructor(initial: S) {
-      this._initial = initial;
-   }
+  /**
+   * Construct store with its initial state. If `reset()` is called, it will
+   * return to this state.
+   */
+  constructor(initial: S) {
+    this._initial = initial;
+  }
 
-   /**
-    * Revert to initial state.
-    */
-   reset(): S {
-      this.state = merge(this._initial);
-      return this.state;
-   }
+  /**
+   * Revert to initial state.
+   */
+  reset(): S {
+    this.state = merge(this._initial);
+    return this.state;
+  }
 
-   /**
-    * Merge new with existing state and optionally emit change event.
-    */
-   update<K extends keyof S>(values: Pick<S, K>, emitChange = true) {
-      this.state = merge(this.state, values);
-      if (emitChange) {
-         this.changed();
-      }
-   }
+  /**
+   * Merge new with existing state and optionally emit change event.
+   */
+  update<K extends keyof S>(values: Pick<S, K>, emitChange = true) {
+    this.state = merge(this.state, values);
+    if (emitChange) {
+      this.changed();
+    }
+  }
 
-   /**
-    * Return current state, optionally resetting to initial value.
-    */
-   load(force = false): S {
-      return force || is.empty(this.state) ? this.reset() : this.state;
-   }
+  /**
+   * Return current state, optionally resetting to initial value.
+   */
+  load(force = false): S {
+    return force || is.empty(this.state) ? this.reset() : this.state;
+  }
 
-   /**
-    * Add a view handler to be notified when state changes.
-    */
-   subscribe(fn: ViewHandler) {
-      if (fn != null) {
-         this._handlers.push(fn);
-      }
-   }
+  /**
+   * Add a view handler to be notified when state changes.
+   */
+  subscribe(fn: ViewHandler) {
+    if (fn != null) {
+      this._handlers.push(fn);
+    }
+  }
 
-   /**
-    * Override to handle messages sent from components.
-    */
-   handler<T>(_action: ActionType, _data?: T) {
-      return;
-   }
+  /**
+   * Override to handle messages sent from components.
+   */
+  handler<T>(_action: ActionType, _data?: T) {
+    return;
+  }
 
-   /**
-    * Remove a view handler.
-    */
-   remove(fn: ViewHandler) {
-      removeItem(this._handlers, fn);
-      return this;
-   }
+  /**
+   * Remove a view handler.
+   */
+  remove(fn: ViewHandler) {
+    removeItem(this._handlers, fn);
+    return this;
+  }
 
-   /**
-    * Display server error code as a console message.
-    */
-   error(msg: string): (errCode: number) => void {
-      return function (errCode: number) {
-         const key = statusPrefix + errCode;
-         const err = is.defined(text, key) ? text[key] : errCode;
-         log.error(msg + ":", err);
-      };
-   }
+  /**
+   * Display server error code as a console message.
+   */
+  error(msg: string): (errCode: number) => void {
+    return function(errCode: number) {
+      const key = statusPrefix + errCode;
+      const err = is.defined(text, key) ? text[key] : errCode;
+      log.error(msg + ":", err);
+    };
+  }
 
-   /**
-    * Invoke every view handler.
-    */
-   changed() {
-      this._handlers.forEach(fn => {
-         fn();
-      });
-   }
+  /**
+   * Invoke every view handler.
+   */
+  changed() {
+    this._handlers.forEach(fn => {
+      fn();
+    });
+  }
 }
