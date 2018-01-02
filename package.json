@@ -1,24 +1,64 @@
 {
-  "name": "@toba/state",
-  "description": "Toba State",
-  "version": "1.0.0-alpha.2",
-  "private": false,
-  "main": "./src/index.ts",
-  "author": {
-    "name": "Jason Abbott"
-  },
-  "license": "MIT",
-  "devDependencies": {
-    "@toba/test": "^1.0.0-beta.8",
-    "@toba/utility": "^1.0.0",
-    "typescript": "^2.6.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/toba/state"
-  },
-  "bugs": {
-    "url": "https://github.com/toba/state/issues"
-  },
-  "dependencies": {}
+   "name": "@toba/state",
+   "description": "Toba State",
+   "version": "1.0.0-alpha.3",
+   "private": false,
+   "main": "index.ts",
+   "files": [
+      "index.ts",
+      "lib/hub.ts"
+   ],
+   "author": {
+      "name": "Jason Abbott"
+   },
+   "license": "MIT",
+   "scripts": {
+      "test": "jest"
+   },
+   "peerDependencies": {
+      "react": "^16.2.0"
+   },
+   "devDependencies": {
+      "@toba/lint": "^1.0.7",
+      "@toba/test": "^1.0.0",
+      "@toba/utility": "^1.0.0",
+      "@types/react": "^16.0.31",
+      "react": "^16.2.0",
+      "typescript": "^2.6.0"
+   },
+   "repository": {
+      "type": "git",
+      "url": "https://github.com/toba/state"
+   },
+   "bugs": {
+      "url": "https://github.com/toba/state/issues"
+   },
+   "dependencies": {},
+   "jest": {
+      "transform": {
+         "^.+\\.tsx?$": "ts-jest"
+      },
+      "transformIgnorePatterns": [
+         "<rootDir>/node_modules/(?!@toba)"
+      ],
+      "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+      "moduleFileExtensions": [
+         "ts",
+         "tsx",
+         "js",
+         "jsx",
+         "json",
+         "node"
+      ]
+   },
+   "prettier": {
+      "arrowParens": "avoid",
+      "bracketSpacing": true,
+      "printWidth": 80,
+      "semi": true,
+      "singleQuote": false,
+      "tabWidth": 3,
+      "trailingComma": "none",
+      "useTabs": false
+   }
 }
