@@ -1,5 +1,5 @@
 import * as React from "react";
-import { State, StateStore, flux } from "./hub";
+import { State, StateStore, flux } from "../lib/hub";
 
 /**
  * Implement Flux pattern with a component that automatically loads its state
@@ -27,6 +27,7 @@ export class FluxComponent<P, S extends State> extends React.Component<P, S> {
    componentDidMount() {
       this.store.subscribe(this.onChange.bind(this));
    }
+
    componentWillUnmount() {
       this.store.remove(this.onChange);
    }

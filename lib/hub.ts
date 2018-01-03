@@ -1,5 +1,5 @@
 import { merge, is, removeItem } from "@toba/utility";
-import { StateComponent } from "./stateful";
+import { StateComponent } from "../jsx/stateful";
 //import { statusPrefix } from "lib/i18n/language";
 //import text from "lib/i18n/localize";
 //import log from "lib/logger";
@@ -9,6 +9,7 @@ import { StateComponent } from "./stateful";
  * component.
  */
 export type StateHandler = (action: number, data?: any) => void;
+
 /**
  * Method for components to handle update dispatched from store.
  */
@@ -83,6 +84,7 @@ export class StateStore<S extends State> {
     */
    constructor(initial: S) {
       this._initial = initial;
+      this.state = merge(this._initial);
    }
 
    /**

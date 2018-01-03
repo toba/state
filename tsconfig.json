@@ -5,10 +5,12 @@
    },
    "include": [
       "./index.ts",
+      "./jsx/**/*.ts",
       "./lib/**/*.ts"
    ],
    "exclude": [
       "./node_modules/",
+      "./jsx/**/*.test.ts",
       "./lib/**/*.test.ts"
    ]
 }

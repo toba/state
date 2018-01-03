@@ -4,7 +4,12 @@
    "version": "1.0.0-alpha.3",
    "private": false,
    "main": "index.ts",
-   "files": ["index.ts", "lib/flux.tsx", "lib/hub.ts", "lib/stateful.tsx"],
+   "files": [
+      "index.ts",
+      "jsx/flux.tsx",
+      "jsx/stateful.tsx",
+      "lib/hub.ts"
+   ],
    "author": {
       "name": "Jason Abbott"
    },
@@ -21,6 +26,7 @@
       "@toba/utility": "^1.0.0",
       "@types/react": "^16.0.31",
       "react": "^16.2.0",
+      "react-test-renderer": "^16.2.0",
       "typescript": "^2.6.0"
    },
    "repository": {
@@ -35,9 +41,18 @@
       "transform": {
          "^.+\\.tsx?$": "ts-jest"
       },
-      "transformIgnorePatterns": ["<rootDir>/node_modules/(?!@toba)"],
+      "transformIgnorePatterns": [
+         "<rootDir>/node_modules/(?!@toba)"
+      ],
       "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-      "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"]
+      "moduleFileExtensions": [
+         "ts",
+         "tsx",
+         "js",
+         "jsx",
+         "json",
+         "node"
+      ]
    },
    "prettier": {
       "arrowParens": "avoid",
