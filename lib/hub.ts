@@ -50,7 +50,10 @@ export const flux = {
    subscribe<S extends StateStore<any> | StateComponent<any, any>>(
       stateful: S
    ): S {
-      this._handlers.push(stateful.handler.bind(stateful));
+      // bind creates a new function which must be reassigned if it's later to
+      // be matched by remove()
+      stateful.handler = stateful.handler.bind(stateful);
+      this._handlers.push(stateful.handler);
       return stateful;
    },
 
