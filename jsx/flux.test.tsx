@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import * as renderer from "react-test-renderer";
 import { FluxComponent } from "../";
 import { makeTestStore, TestState } from "../lib/testutil";
