@@ -1,7 +1,7 @@
-import { ViewHandler, flux } from "../";
-import { makeTestStore } from "./testutil";
+import { ViewHandler, flux } from '../';
+import { makeTestStore } from './testutil';
 
-test("flux emit", () => {
+test('flux emit', () => {
    const testStore1 = makeTestStore();
    const testStore2 = makeTestStore();
 
@@ -11,10 +11,10 @@ test("flux emit", () => {
    expect(testStore1.lastData).toBeUndefined();
    expect(testStore2.lastAction).toBe(1);
 
-   flux.emit(2, "data");
+   flux.emit(2, 'data');
 
    expect(testStore1.lastAction).toBe(2);
-   expect(testStore1.lastData).toBe("data");
+   expect(testStore1.lastData).toBe('data');
    expect(testStore2.lastAction).toBe(2);
 
    // second store values shouldn't change after removal
@@ -23,10 +23,10 @@ test("flux emit", () => {
 
    expect(testStore1.lastAction).toBe(3);
    expect(testStore2.lastAction).toBe(2);
-   expect(testStore2.lastData).toBe("data");
+   expect(testStore2.lastData).toBe('data');
 });
 
-test("StateStore default state", () => {
+test('StateStore default state', () => {
    const testStore = makeTestStore();
    const state = testStore.load();
 
@@ -35,17 +35,17 @@ test("StateStore default state", () => {
    expect(state.text).toBeUndefined();
 });
 
-test("StateStore update state", () => {
+test('StateStore update state', () => {
    const testStore = makeTestStore();
-   testStore.update({ text: "test" });
+   testStore.update({ text: 'test' });
    const state = testStore.load();
 
    expect(state).toBeDefined();
    expect(state.value).toBe(false);
-   expect(state.text).toBe("test");
+   expect(state.text).toBe('test');
 });
 
-test("StateStore view handler", () => {
+test('StateStore view handler', () => {
    let called1 = false;
    let called2 = false;
    const testStore = makeTestStore();

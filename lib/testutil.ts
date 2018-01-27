@@ -1,4 +1,4 @@
-import { State, StateStore, flux } from "../";
+import { State, StateStore, flux } from '../';
 
 export interface TestState extends State {
    value: boolean;

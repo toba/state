@@ -1,5 +1,5 @@
-import * as React from "react";
-import { flux } from "../lib/hub";
+import * as React from 'react';
+import { flux } from '../lib/hub';
 
 /**
  * StateComponent subscribes to Flux-style notifications without implementing a

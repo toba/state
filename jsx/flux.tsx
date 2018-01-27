@@ -1,5 +1,5 @@
-import * as React from "react";
-import { State, StateStore, flux } from "../lib/hub";
+import * as React from 'react';
+import { State, StateStore, flux } from '../lib/hub';
 
 /**
  * Implement Flux pattern with a component that automatically loads its state

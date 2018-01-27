@@ -1,7 +1,7 @@
-import * as React from "react";
-import * as renderer from "react-test-renderer";
-import { FluxComponent } from "../";
-import { makeTestStore, TestState } from "../lib/testutil";
+import * as React from 'react';
+import * as renderer from 'react-test-renderer';
+import { FluxComponent } from '../';
+import { makeTestStore, TestState } from '../lib/testutil';
 
 const testStore = makeTestStore();
 
@@ -16,7 +16,7 @@ class TestComponent extends FluxComponent<{}, TestState> {
    }
 }
 
-test("something", () => {
+test('something', () => {
    const component = renderer.create(<TestComponent />);
    const tree = component.toJSON();
    expect(tree).toMatchSnapshot();

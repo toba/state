@@ -1,5 +1,5 @@
-import { merge, is, removeItem } from "@toba/utility";
-import { StateComponent } from "../jsx/stateful";
+import { merge, is, removeItem } from '@toba/utility';
+import { StateComponent } from '../jsx/stateful';
 //import { statusPrefix } from "lib/i18n/language";
 //import text from "lib/i18n/localize";
 //import log from "lib/logger";
