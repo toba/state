@@ -3,6 +3,9 @@
    "description": "Toba State",
    "version": "1.0.0-alpha.3",
    "private": false,
+   "publishConfig": {
+      "access": "public"
+   },
    "main": "index.ts",
    "files": ["index.ts", "jsx/flux.tsx", "jsx/stateful.tsx", "lib/hub.ts"],
    "author": {
