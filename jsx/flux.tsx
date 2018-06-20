@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { State, StateStore, flux } from '../lib/hub';
+import { is } from '@toba/tools';
+import { State, StateStore, flux } from '../lib/';
 
 /**
  * Implement Flux pattern with a component that automatically loads its state
@@ -10,26 +11,62 @@ import { State, StateStore, flux } from '../lib/hub';
  *
  * Simpler components that with unique state may use `StateComponent` instead.
  *
- * https://github.com/facebook/flux/tree/master/examples/flux-concepts
+ * @see https://github.com/facebook/flux/tree/master/examples/flux-concepts
  */
 export class FluxComponent<P, S extends State> extends React.Component<P, S> {
-   store: StateStore<S>;
+   /** Subscribed stores keyed to the state field they should manage. */
+   private stores: Map<string, StateStore<any>>;
+   /** Change handlers keyed the same way as the `storeMap`. */
+   private handlers: Map<string, any>;
 
-   constructor(props: P, store: StateStore<S>) {
+   /**
+    * Component is built with map of stores. For example, a cart component
+    * might attach to both `user` and `order` state by receiving a `storeMap`
+    * argument of `{ user: userStore, order: orderStore }`. This would cause
+    * component state to include `user` and `order` fields managed by those
+    * stores along with whatever other state the component manages internally.
+    */
+   constructor(
+      props: P,
+      storeMap: { [key: string]: StateStore<any> },
+      initialState: S
+   ) {
       super(props);
-      this.store = store;
-      this.state = store.load();
+      this.stores = new Map();
+      this.handlers = new Map();
+
+      Object.keys(storeMap).forEach(key => {
+         const s = storeMap[key];
+         this.stores.set(key, s);
+         initialState[key] = s.load();
+      });
+
+      this.state = initialState;
    }
 
    /**
-    * Subscribe component to all store changes.
+    * Subscribe component to change events for each store. Whenever component
+    * receives change event, it sets its state for that store's field to
+    * whatever the current store state is.
     */
    componentDidMount() {
-      this.store.subscribe(this.onChange.bind(this));
+      this.stores.forEach((store, key) => {
+         const fn = () => {
+            // call `super` to avoid the key check in the override above
+            super.setState({ [key]: store.state });
+         };
+         this.handlers.set(key, fn);
+         store.subscribe(fn.bind(this));
+      });
    }
 
+   /**
+    * Remove component handler from each store.
+    */
    componentWillUnmount() {
-      this.store.remove(this.onChange);
+      this.stores.forEach((store, key) => {
+         store.remove(this.handlers.get(key));
+      });
    }
 
    /**
@@ -44,24 +81,27 @@ export class FluxComponent<P, S extends State> extends React.Component<P, S> {
     * sync with component state.
     */
    setState<K extends keyof S>(
-      state:
+      newState:
          | ((prevState: Readonly<S>, props: P) => Pick<S, K> | S)
          | (Pick<S, K> | S),
-      _callback?: () => any
+      callback?: () => any
    ): void {
-      this.store.update(state);
-      this.onChange();
+      this.stores.forEach((_store, key) => {
+         if (is.defined(newState, key)) {
+            throw new ReferenceError(
+               `cannot set state for "${key}" because it is managed by a flux store`
+            );
+         }
+      });
+      super.setState(newState, callback);
    }
 
    /**
     * Emit an action to be processed by zero or more stores. If the action
     * triggers a change in the bound store then `onChange()` will be
     * called to update component state.
-    *
-    * If `data` will be relayed to a service call then the service must define
-    * a matching `struct` to unmarshall the JSON.
     */
-   emit(action: number, data?: any) {
-      flux.emit(action, data);
+   emit(action: number, payload?: any) {
+      flux.emit(action, payload);
    }
 }

@@ -1,77 +1,53 @@
-import { ViewHandler, flux } from '../';
-import { makeTestStore } from './testutil';
+import 'react';
+import { StateStore, flux } from './';
 
-test('flux emit', () => {
-   const testStore1 = makeTestStore();
-   const testStore2 = makeTestStore();
+const mockHandler1 = jest.fn();
+const mockHandler2 = jest.fn();
 
-   flux.emit(1);
+class MockStore1 extends StateStore {
+   constructor() {
+      super({ value: 0 });
+   }
+   handler(action, payload) {
+      mockHandler1(action, payload);
+   }
+}
 
-   expect(testStore1.lastAction).toBe(1);
-   expect(testStore1.lastData).toBeUndefined();
-   expect(testStore2.lastAction).toBe(1);
+class MockStore2 extends StateStore {
+   constructor() {
+      super({ value: 0 });
+   }
+   handler(action, payload) {
+      mockHandler2(action, payload);
+   }
+}
 
-   flux.emit(2, 'data');
+const store1 = new MockStore1();
+const store2 = new MockStore2();
 
-   expect(testStore1.lastAction).toBe(2);
-   expect(testStore1.lastData).toBe('data');
-   expect(testStore2.lastAction).toBe(2);
-
-   // second store values shouldn't change after removal
-   flux.remove(testStore2);
-   flux.emit(3);
-
-   expect(testStore1.lastAction).toBe(3);
-   expect(testStore2.lastAction).toBe(2);
-   expect(testStore2.lastData).toBe('data');
+beforeEach(() => {
+   flux.reset();
+   mockHandler1.mockReset();
+   mockHandler2.mockReset();
+   expect(flux._handlers.length).toBe(0);
 });
 
-test('StateStore default state', () => {
-   const testStore = makeTestStore();
-   const state = testStore.load();
-
-   expect(state).toBeDefined();
-   expect(state.value).toBe(false);
-   expect(state.text).toBeUndefined();
+test('emits actions only to subscribed stores', () => {
+   flux.subscribe(store1);
+   expect(mockHandler1).toHaveBeenCalledTimes(0);
+   expect(mockHandler2).toHaveBeenCalledTimes(0);
+   flux.emit(99, { key: 'value' });
+   expect(mockHandler1).toHaveBeenCalledTimes(1);
+   expect(mockHandler1).toHaveBeenCalledWith(99, { key: 'value' });
+   expect(mockHandler2).toHaveBeenCalledTimes(0);
 });
 
-test('StateStore update state', () => {
-   const testStore = makeTestStore();
-   testStore.update({ text: 'test' });
-   const state = testStore.load();
-
-   expect(state).toBeDefined();
-   expect(state.value).toBe(false);
-   expect(state.text).toBe('test');
-});
-
-test('StateStore view handler', () => {
-   let called1 = false;
-   let called2 = false;
-   const testStore = makeTestStore();
-   const handler1: ViewHandler = () => {
-      called1 = true;
-   };
-   const handler2: ViewHandler = () => {
-      called2 = true;
-   };
-
-   expect(called1).toBe(false);
-   expect(called2).toBe(false);
-
-   testStore.subscribe(handler1);
-   testStore.subscribe(handler2);
-   // manually emit change
-   testStore.changed();
-
-   expect(called1).toBe(true);
-   expect(called2).toBe(true);
-
-   called1 = false;
-   called2 = false;
-
-   // automatically emit change after update
-   testStore.update({ value: true });
-   expect(called1).toBe(true);
-   expect(called2).toBe(true);
+test('emits actions to multiple stores', () => {
+   flux.subscribe(store1);
+   flux.subscribe(store2);
+   expect(mockHandler1).toHaveBeenCalledTimes(0);
+   expect(mockHandler2).toHaveBeenCalledTimes(0);
+   flux.emit(33, { key: 'value' });
+   expect(mockHandler1).toHaveBeenCalledTimes(1);
+   expect(mockHandler2).toHaveBeenCalledTimes(1);
 });

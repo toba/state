@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as renderer from 'react-test-renderer';
-import { FluxComponent } from '../';
+import { FluxComponent } from '../lib/';
 import { makeTestStore, TestState } from '../lib/testutil';
 
 const testStore = makeTestStore();
