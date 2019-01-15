@@ -1,13 +1,18 @@
 import * as React from 'react';
 import * as renderer from 'react-test-renderer';
-import { FluxComponent } from '../lib/';
-import { makeTestStore, TestState } from '../lib/testutil';
+import { FluxComponent } from './flux';
+import { makeTestStore, TestState } from './__mocks__';
 
 const testStore = makeTestStore();
 
-class TestComponent extends FluxComponent<{}, TestState> {
+interface State {
+   test: TestState;
+   whatever: string;
+}
+
+class TestComponent extends FluxComponent<{}, State> {
    constructor(props: any) {
-      super(props, testStore);
+      super(props, { test: testStore });
       // this.emit(Action.GetHostConfiguration);
       // this.selectTab = this.selectTab.bind(this);
    }

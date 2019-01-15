@@ -6,5 +6,5 @@ export {
    StateManager,
    ActionHandler
 } from './state';
-export { FluxComponent } from './flux';
+export { FluxComponent, StoreHash as StoreMap } from './flux';
 export { StateComponent } from './stateful';

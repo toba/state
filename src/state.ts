@@ -95,7 +95,7 @@ export class StateStore<S extends State> implements StateManager {
    /**
     * Remove a view handler.
     */
-   remove(fn: ViewHandler): this {
+   remove(fn?: ViewHandler): this {
       removeItem(this.handlers, fn);
       return this;
    }

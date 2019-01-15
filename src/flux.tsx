@@ -1,7 +1,14 @@
 import * as React from 'react';
-import { is } from '@toba/tools';
-import { State, StateStore, empty, ActionHandler } from './state';
+import { State, StateStore, ViewHandler } from './state';
 import { flux } from './hub';
+
+/**
+ * Map some state keys to a state store which will manage that part of the
+ * state.
+ */
+export type StoreHash<S> = { [K in keyof Partial<S>]: StateStore<S[K]> };
+
+export type StoreMap<S> = Map<keyof S, StateStore<S[keyof S]>>;
 
 /**
  * Implement Flux pattern with a component that automatically loads its state
@@ -19,9 +26,9 @@ export class FluxComponent<P, S extends State> extends React.PureComponent<
    S
 > {
    /** Subscribed stores keyed to the state field they should manage. */
-   private stores: Map<string, StateStore<any>>;
+   private stores: StoreMap<S>;
    /** Change handlers keyed the same way as the `storeMap`. */
-   private handlers: Map<string, any>;
+   private handlers: Map<keyof S, ViewHandler>;
 
    /**
     * Component is built with map of stores. For example, a cart component
@@ -30,19 +37,15 @@ export class FluxComponent<P, S extends State> extends React.PureComponent<
     * component state to include `user` and `order` fields managed by those
     * stores along with whatever other state the component manages internally.
     */
-   constructor(
-      props: P,
-      storeMap: { [key: string]: StateStore<any> },
-      initialState?: S
-   ) {
+   constructor(props: P, storeKeys: StoreHash<S>, initialState?: S) {
       super(props);
       this.stores = new Map();
       this.handlers = new Map();
 
       const state: Partial<S> = {};
 
-      Object.keys(storeMap).forEach(key => {
-         const s = storeMap[key];
+      Object.keys(storeKeys).forEach(key => {
+         const s = storeKeys[key];
          this.stores.set(key, s);
          state[key] = s.load();
       });
@@ -73,7 +76,7 @@ export class FluxComponent<P, S extends State> extends React.PureComponent<
     */
    componentWillUnmount() {
       this.stores.forEach((store, key) => {
-         store.remove(this.handlers.get(key));
+         store.remove(this.handlers.get(key)!);
       });
    }
 
@@ -89,13 +92,11 @@ export class FluxComponent<P, S extends State> extends React.PureComponent<
     * sync with component state.
     */
    setState<K extends keyof S>(
-      newState:
-         | ((prevState: Readonly<S>, props: P) => Pick<S, K> | S)
-         | (Pick<S, K> | S),
+      newState: Pick<S, K>,
       callback?: () => any
    ): void {
-      this.stores.forEach((_store, key) => {
-         if (is.defined(newState, key)) {
+      Object.keys(newState).forEach(key => {
+         if (this.stores.has(key)) {
             throw new ReferenceError(
                `cannot set state for "${key}" because it is managed by a flux store`
             );

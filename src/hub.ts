@@ -28,7 +28,7 @@ export const flux = {
     * Subscribe store or component to receive actions from components or other
     * stores.
     */
-   subscribe(stateful: StateManager): StateManager {
+   subscribe<T extends StateManager>(stateful: T): T {
       // bind creates a new function which must be reassigned if it's later to
       // be matched by remove()
       stateful.handler = stateful.handler.bind(stateful);
