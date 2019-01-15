@@ -82,6 +82,8 @@ export class StateStore<S extends State> implements StateManager {
    subscribe(fn: ViewHandler): this {
       if (is.callable(fn)) {
          this.handlers.push(fn);
+      } else {
+         console.warn(`Cannot subscribe ${JSON.stringify(fn)}`);
       }
       return this;
    }
@@ -94,10 +96,21 @@ export class StateStore<S extends State> implements StateManager {
    }
 
    /**
+    * Number of components subscribed to the store.
+    */
+   get handlerCount() {
+      return this.handlers.length;
+   }
+
+   /**
     * Remove a view handler.
     */
    remove(fn?: ViewHandler): this {
-      removeItem(this.handlers, fn);
+      if (!removeItem(this.handlers, fn)) {
+         console.warn(
+            `Unable to remove handler from state store: ${JSON.stringify(fn)}`
+         );
+      }
       return this;
    }
 

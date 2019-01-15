@@ -6,9 +6,7 @@ import { flux } from './hub';
  * Map some state keys to a state store which will manage that part of the
  * state.
  */
-export type StoreHash<S> = { [K in keyof Partial<S>]: StateStore<S[K]> };
-
-export type StoreMap<S> = Map<keyof S, StateStore<S[keyof S]>>;
+export type StoreHash<S> = { [K in keyof Partial<S>]: StateStore<S[K]> | S[K] };
 
 /**
  * Implement Flux pattern with a component that automatically loads its state
@@ -25,34 +23,49 @@ export class FluxComponent<P, S extends State> extends React.PureComponent<
    P,
    S
 > {
-   /** Subscribed stores keyed to the state field they should manage. */
-   private stores: StoreMap<S>;
-   /** Change handlers keyed the same way as the `storeMap`. */
+   /**
+    * Subscribed stores keyed to the state field they manage.
+    */
+   private stores: Map<keyof S, StateStore<S[keyof S]>>;
+   /**
+    * Change handler instances keyed the same way as the `stores`. These are
+    * needed to unsubscribe from the store when the component unmounts.
+    *
+    * The `StateStore` keeps a reference to the same handler in its `handlers`
+    * array.
+    */
    private handlers: Map<keyof S, ViewHandler>;
 
    /**
     * Component is built with map of stores. For example, a cart component
-    * might attach to both `user` and `order` state by receiving a `storeMap`
-    * argument of `{ user: userStore, order: orderStore }`. This would cause
-    * component state to include `user` and `order` fields managed by those
-    * stores along with whatever other state the component manages internally.
+    * might attach to both `user` and `order` state by receiving an
+    * `initialState` argument of `{ user: userStore, order: orderStore }`.
+    * This would cause component state to include `user` and `order` fields
+    * managed by those stores along with whatever other state the component
+    * manages internally.
     */
-   constructor(props: P, storeKeys: StoreHash<S>, initialState?: Partial<S>) {
+   constructor(props: P, initialState: StoreHash<S>) {
       super(props);
       this.stores = new Map();
       this.handlers = new Map();
 
       const state: Partial<S> = {};
 
-      Object.keys(storeKeys).forEach(key => {
-         const s = storeKeys[key];
-         this.stores.set(key, s);
-         state[key] = s.load();
+      Object.keys(initialState).forEach(key => {
+         const value = initialState[key];
+         if (value instanceof StateStore) {
+            this.stores.set(key, value);
+            state[key] = value.load();
+         } else {
+            state[key] = value;
+         }
       });
 
-      this.state = (initialState === undefined
-         ? state
-         : { ...initialState, ...state }) as S;
+      this.state = state as S;
+
+      if (this.stores.size == 0) {
+         console.warn('No state stores were assigned to the FluxComponent');
+      }
    }
 
    /**
@@ -65,11 +78,16 @@ export class FluxComponent<P, S extends State> extends React.PureComponent<
     */
    componentDidMount() {
       this.stores.forEach((store, key) => {
-         const fn: ViewHandler = () => {
+         /**
+          * Handler is a simple method that applies current store state to the
+          * key it manages in the overall state.
+          */
+         const fn: ViewHandler = (() => {
             super.setState({ [key]: store.state });
-         };
+         }).bind(this);
+
          this.handlers.set(key, fn);
-         store.subscribe(fn.bind(this));
+         store.subscribe(fn);
       });
    }
 
@@ -93,7 +111,7 @@ export class FluxComponent<P, S extends State> extends React.PureComponent<
       Object.keys(newState).forEach(key => {
          if (this.stores.has(key)) {
             throw new ReferenceError(
-               `cannot set state for "${key}" because it is managed by a flux store`
+               `Cannot set state for "${key}" because it is managed by a flux store`
             );
          }
       });

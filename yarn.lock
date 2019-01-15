@@ -165,7 +165,7 @@
     tslint-consistent-codestyle "^1.14.0"
     typescript "^3.2.0"
 
-"@toba/test-react@^3.1.0":
+"@toba/test-react@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@toba/test-react/-/test-react-1.0.0.tgz#0f6c6d1737d3a6409586e9827465d41f4be9eda2"
   integrity sha512-J3BVbXpXIkFUdiM2NsLna2mGlDtrT2rZE+2By+JfjO4v6HfnNMNhPMTOWRTPyANAhX/xe/a8bVGOD44ue4owFw==
