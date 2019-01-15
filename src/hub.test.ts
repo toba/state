@@ -1,19 +1,24 @@
 import 'react';
 import { StateStore, flux } from './';
+import { State } from './state';
 
 const mockHandler1 = jest.fn();
 const mockHandler2 = jest.fn();
 
-class MockStore1 extends StateStore {
+interface DumbState extends State {
+   value: number;
+}
+
+class MockStore1 extends StateStore<DumbState> {
    constructor() {
       super({ value: 0 });
    }
-   handler(action, payload) {
+   handler<T>(action: number, payload: T) {
       mockHandler1(action, payload);
    }
 }
 
-class MockStore2 extends StateStore {
+class MockStore2 extends StateStore<DumbState> {
    constructor() {
       super({ value: 0 });
    }
@@ -29,7 +34,7 @@ beforeEach(() => {
    flux.reset();
    mockHandler1.mockReset();
    mockHandler2.mockReset();
-   expect(flux._handlers.length).toBe(0);
+   expect(flux.handlers.length).toBe(0);
 });
 
 test('emits actions only to subscribed stores', () => {

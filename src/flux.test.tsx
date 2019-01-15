@@ -13,17 +13,12 @@ interface State {
 class TestComponent extends FluxComponent<{}, State> {
    constructor(props: any) {
       super(props, { test: testStore });
-      // this.emit(Action.GetHostConfiguration);
-      // this.selectTab = this.selectTab.bind(this);
    }
-   render() {
-      return <div />;
-   }
+   render = () => <h1>Test</h1>;
 }
 
 test('something', () => {
    const component = renderer.create(<TestComponent />);
    const tree = component.toJSON();
    expect(tree).toMatchSnapshot();
-   //expect(2).toBe(2);
 });

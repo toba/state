@@ -27,7 +27,7 @@ export class StateComponent<P, S> extends React.PureComponent<P, S>
    }
 
    /**
-    * Handle messages sent from other components.
+    * Override to handle messages sent from other components.
     */
    handler<T>(_action: number, _data?: T) {
       return;

@@ -1,8 +1,9 @@
 import * as React from 'react';
-import renderer from 'react-test-renderer';
-import { FluxComponent, StateStore } from '.';
+import * as renderer from 'react-test-renderer';
+import { StateStore, State } from './state';
+import { FluxComponent } from './flux';
 
-interface MockState {
+interface MockState extends State {
    text: string;
 }
 interface OneState {
@@ -59,11 +60,4 @@ test('updating state does not change initial values', () => {
    store.setState({ text: 'new value' });
    store.reset();
    expect(store.state.text).toBe('initial');
-});
-
-test('resetting only reverts known values', () => {
-   store.setState({ text: 'new value', somethingNew: 'other' });
-   store.reset();
-   expect(store.state.text).toBe('initial');
-   expect(store.state.somethingNew).toBe('other');
 });
