@@ -103,8 +103,10 @@ export class FluxComponent<P, S extends State> extends React.PureComponent<
    /**
     * Curry the normal `emit()` function so it can be assigned to an event
     * handler.
+    * @example
+    * <button onClick={this.do(Action.Login)}>Login</button>
     */
-   send = <T extends {}>(action: number, payload?: T): (() => void) => () =>
+   do = <T extends {}>(action: number, payload?: T): (() => void) => () =>
       this.emit(action, payload);
 
    /**
