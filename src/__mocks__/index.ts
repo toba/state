@@ -15,7 +15,7 @@ export class TestStore extends StateStore<TestState> {
       });
    }
 
-   handler(action: number, data?: any) {
+   handler<T>(action: number, data?: T) {
       this.lastAction = action;
       this.lastData = data;
    }

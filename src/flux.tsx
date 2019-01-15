@@ -59,11 +59,13 @@ export class FluxComponent<P, S extends State> extends React.PureComponent<
     * Subscribe component to change events for each store. Whenever component
     * receives change event, it sets its state for that store's field to
     * whatever the current store state is.
+    *
+    * Call `super.setState()` to avoid the key check in the `setState` override
+    * below.
     */
    componentDidMount() {
       this.stores.forEach((store, key) => {
-         const fn = () => {
-            // call `super` to avoid the key check in the override above
+         const fn: ViewHandler = () => {
             super.setState({ [key]: store.state });
          };
          this.handlers.set(key, fn);
@@ -76,16 +78,9 @@ export class FluxComponent<P, S extends State> extends React.PureComponent<
     */
    componentWillUnmount() {
       this.stores.forEach((store, key) => {
-         store.remove(this.handlers.get(key)!);
+         store.remove(this.handlers.get(key));
       });
    }
-
-   /**
-    * Update component state whenever store signals a change.
-    */
-   // onChange() {
-   //    super.setState(this.store.state);
-   // }
 
    /**
     * Set state on store so it's the authority on state and doesn't get out of
@@ -106,11 +101,17 @@ export class FluxComponent<P, S extends State> extends React.PureComponent<
    }
 
    /**
+    * Curry the normal `emit()` function so it can be assigned to an event
+    * handler.
+    */
+   send = <T extends {}>(action: number, payload?: T): (() => void) => () =>
+      this.emit(action, payload);
+
+   /**
     * Emit an action to be processed by zero or more stores. If the action
     * triggers a change in the bound store then `onChange()` will be
     * called to update component state.
     */
-   emit(action: number, payload?: any) {
+   emit = <T extends {}>(action: number, payload?: T) =>
       flux.emit(action, payload);
-   }
 }

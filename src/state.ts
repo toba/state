@@ -55,6 +55,7 @@ export class StateStore<S extends State> implements StateManager {
 
    /**
     * Merge new with existing state and optionally emit change event.
+    * @param emitChange Whether to emit change after state is set (default `true`)
     */
    setState<K extends keyof S, P>(
       values:
