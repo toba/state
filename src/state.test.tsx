@@ -1,6 +1,6 @@
 import * as React from 'react';
 import renderer from 'react-test-renderer';
-import { FluxComponent, StateStore } from './';
+import { FluxComponent, StateStore } from '.';
 
 interface MockState {
    text: string;

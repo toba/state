@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { is } from '@toba/tools';
-import { State, StateStore, flux } from '../lib/';
+import { State, StateStore, empty, ActionHandler } from './state';
+import { flux } from './hub';
 
 /**
  * Implement Flux pattern with a component that automatically loads its state
@@ -9,11 +10,14 @@ import { State, StateStore, flux } from '../lib/';
  * components may need to maintain private state amalgamated from multiple
  * state stores.
  *
- * Simpler components that with unique state may use `StateComponent` instead.
+ * Simpler components with unique state may use `StateComponent` instead.
  *
  * @see https://github.com/facebook/flux/tree/master/examples/flux-concepts
  */
-export class FluxComponent<P, S extends State> extends React.Component<P, S> {
+export class FluxComponent<P, S extends State> extends React.PureComponent<
+   P,
+   S
+> {
    /** Subscribed stores keyed to the state field they should manage. */
    private stores: Map<string, StateStore<any>>;
    /** Change handlers keyed the same way as the `storeMap`. */
@@ -29,19 +33,23 @@ export class FluxComponent<P, S extends State> extends React.Component<P, S> {
    constructor(
       props: P,
       storeMap: { [key: string]: StateStore<any> },
-      initialState: S
+      initialState?: S
    ) {
       super(props);
       this.stores = new Map();
       this.handlers = new Map();
 
+      const state: Partial<S> = {};
+
       Object.keys(storeMap).forEach(key => {
          const s = storeMap[key];
          this.stores.set(key, s);
-         initialState[key] = s.load();
+         state[key] = s.load();
       });
 
-      this.state = initialState;
+      this.state = (initialState === undefined
+         ? state
+         : { ...initialState, ...state }) as S;
    }
 
    /**
@@ -72,9 +80,9 @@ export class FluxComponent<P, S extends State> extends React.Component<P, S> {
    /**
     * Update component state whenever store signals a change.
     */
-   onChange() {
-      super.setState(this.store.state);
-   }
+   // onChange() {
+   //    super.setState(this.store.state);
+   // }
 
    /**
     * Set state on store so it's the authority on state and doesn't get out of

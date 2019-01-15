@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { flux } from '../lib/hub';
+import { flux } from './hub';
+import { StateManager } from './state';
 
 /**
  * StateComponent subscribes to Flux-style notifications without implementing a
@@ -10,7 +11,8 @@ import { flux } from '../lib/hub';
  * Use the `FluxComponent` for a separately managed state store that can be
  * incorporated into multiple components.
  */
-export class StateComponent<P, S> extends React.Component<P, S> {
+export class StateComponent<P, S> extends React.PureComponent<P, S>
+   implements StateManager {
    constructor(props: P, initialState: S) {
       super(props);
       this.state = initialState;
@@ -19,6 +21,7 @@ export class StateComponent<P, S> extends React.Component<P, S> {
    componentDidMount() {
       flux.subscribe(this);
    }
+
    componentWillUnmount() {
       flux.remove(this);
    }
@@ -26,7 +29,7 @@ export class StateComponent<P, S> extends React.Component<P, S> {
    /**
     * Handle messages sent from other components.
     */
-   handler(_action: number, _data?: S) {
+   handler<T>(_action: number, _data?: T) {
       return;
    }
 }

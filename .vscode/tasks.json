@@ -12,6 +12,7 @@
       {
          "label": "Build",
          "command": "./node_modules/.bin/tsc",
+         "args": ["--project", "tsconfig.build.json"],
          "type": "shell",
          "group": "build",
          "problemMatcher": ["$tsc"]
@@ -22,6 +23,19 @@
          "args": ["publish"],
          "type": "shell",
          "group": "none",
+         "problemMatcher": []
+      },
+      {
+         "label": "List Production Dependencies",
+         "command": "npm",
+         "args": ["ls", "-prod=true"],
+         "type": "shell",
+         "presentation": {
+            "echo": false,
+            "reveal": "always",
+            "focus": true,
+            "panel": "shared"
+         },
          "problemMatcher": []
       }
    ]

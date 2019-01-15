@@ -1,64 +1,38 @@
 {
    "name": "@toba/state",
-   "description": "Toba State",
-   "version": "1.0.0",
+   "description": "React State",
+   "version": "2.0.0",
    "private": false,
    "publishConfig": {
       "access": "public"
    },
+   "sideEffects": false,
    "main": "dist/index.js",
-   "types:": "dist/index.d.ts",
+   "types": "dist/index.d.ts",
    "files": [
-      "dist/**/*"
+      "dist"
    ],
    "author": {
-      "name": "Jason Abbott"
+      "name": "Jason Abbott",
+      "url": "http://github.com/toba"
    },
    "license": "MIT",
    "scripts": {
-      "prepublishOnly": "./node_modules/.bin/tsc",
+      "prepublishOnly": "./node_modules/.bin/tsc --project tsconfig.build.json",
       "test": "jest --coverage"
    },
    "peerDependencies": {
-      "react": "^16.4.0"
+      "react": "^16.7.0"
    },
    "devDependencies": {
-      "@toba/build": "^1.7.0",
-      "@toba/test": "^1.19.0",
-      "@toba/tools": "^3.3.0",
-      "@types/react": "^16.4.0",
-      "@types/react-test-renderer": "^16.0.1",
-      "react": "^16.4.0",
-      "react-test-renderer": "^16.4.0",
-      "typescript": "^2.9.0"
+      "@toba/develop": "^4.4.0",
+      "@toba/test": "^3.1.0",
+      "@toba/tools": "^5.1.0",
+      "@types/react": "^16.4.0"
    },
    "repository": {
       "type": "git",
       "url": "https://github.com/toba/state"
    },
-   "bugs": {
-      "url": "https://github.com/toba/state/issues"
-   },
-   "dependencies": {},
-   "jest": {
-      "transform": {
-         "^.+\\.tsx?$": "ts-jest"
-      },
-      "transformIgnorePatterns": [
-         "<rootDir>/node_modules/(?!@toba)"
-      ],
-      "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-      "moduleFileExtensions": [
-         "ts",
-         "tsx",
-         "js",
-         "jsx",
-         "json",
-         "node"
-      ]
-   },
-   "prettier": {
-      "singleQuote": true,
-      "tabWidth": 3
-   }
+   "dependencies": {}
 }

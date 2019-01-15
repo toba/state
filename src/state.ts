@@ -1,7 +1,19 @@
-import { merge, is, removeItem } from '@toba/tools';
+import { mergeAll, clone, is, removeItem } from '@toba/tools';
 
 export interface State {
    [key: string]: any;
+}
+
+export const empty: State = {};
+
+/**
+ * Method for state stores or simple components to handle actions dispatched
+ * from a component.
+ */
+export type ActionHandler = <T>(action: number, data?: T) => void;
+
+export interface StateManager {
+   handler: ActionHandler;
 }
 
 /**
@@ -17,7 +29,8 @@ export type ViewHandler = () => void;
  * Create as many state stores as are useful for avoiding duplicity and
  * complexity.
  */
-export class StateStore<S extends State> {
+export class StateStore<S extends State> implements StateManager {
+   /** Current state. */
    state: S;
    private initial: S;
    private handlers: ViewHandler[] = [];
@@ -28,7 +41,7 @@ export class StateStore<S extends State> {
     */
    constructor(initial: S) {
       this.initial = initial;
-      this.state = merge(this.initial);
+      this.state = clone(this.initial);
    }
 
    /**
@@ -36,7 +49,7 @@ export class StateStore<S extends State> {
     * in the initial state will remain as is. They won't be "unset".
     */
    reset(): S {
-      this.state = merge(this.initial);
+      this.state = clone(this.initial);
       return this.state;
    }
 
@@ -49,7 +62,7 @@ export class StateStore<S extends State> {
          | (Pick<S, K> | S),
       emitChange = true
    ) {
-      this.state = merge(this.state, values);
+      this.state = mergeAll(this.state, values);
       if (emitChange) {
          this.changed();
       }
@@ -65,10 +78,11 @@ export class StateStore<S extends State> {
    /**
     * Add a view handler to be notified when state changes.
     */
-   subscribe(fn: ViewHandler) {
+   subscribe(fn: ViewHandler): this {
       if (is.callable(fn)) {
          this.handlers.push(fn);
       }
+      return this;
    }
 
    /**
