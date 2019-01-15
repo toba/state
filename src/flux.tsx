@@ -37,7 +37,7 @@ export class FluxComponent<P, S extends State> extends React.PureComponent<
     * component state to include `user` and `order` fields managed by those
     * stores along with whatever other state the component manages internally.
     */
-   constructor(props: P, storeKeys: StoreHash<S>, initialState?: S) {
+   constructor(props: P, storeKeys: StoreHash<S>, initialState?: Partial<S>) {
       super(props);
       this.stores = new Map();
       this.handlers = new Map();
