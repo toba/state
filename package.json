@@ -1,7 +1,7 @@
 {
    "name": "@toba/state",
    "description": "React State",
-   "version": "2.1.0",
+   "version": "2.1.1",
    "private": false,
    "publishConfig": {
       "access": "public"
@@ -27,7 +27,7 @@
    "devDependencies": {
       "@toba/develop": "^4.4.0",
       "@toba/test-react": "^1.0.0",
-      "@toba/tools": "^5.1.0",
+      "@toba/tools": "^6.1.0",
       "@types/react": "^16.4.0",
       "react": "^16.7.0"
    },
