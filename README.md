@@ -9,12 +9,19 @@
 
 # Toba State
 
+[Flux](https://facebook.github.io/flux/docs/overview.html) pattern state management.
+
+
+## Usage
+
 ```
 yarn add @toba/state
 ```
 
+## Example
+
 ```ts
-import * as React from 'react';
+import React from 'react';
 import { State, StateStore, flux } from '@toba/state';
 
 export interface UserState extends State {
